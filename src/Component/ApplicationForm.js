@@ -71,12 +71,12 @@ export default class ApplicationForm extends Component
                 <Form.Item 
                     label = "IsActive">
                     
-                    <Select defaultValue = { this.state.currentData.isActive === true ? "female" : "male" } >
-                        <Option value="male"> Male </Option>
-                        <Option value="female"> Female </Option>
+                    <Select defaultValue = { this.state.currentData.isActive === true ? "true" : "false" } >
+                        <Option value="true"> Male </Option>
+                        <Option value="false"> Female </Option>
                     </Select>
-
-                </Form.Item>
+                </Form.Item >
+                    
 
             </Form>
         )
