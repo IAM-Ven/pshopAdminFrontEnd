@@ -1,6 +1,6 @@
 import React, { Component }             from 'react'
 
-import { Form, Input, Button, Select }  from 'antd';
+import { Form, Input, Button, Select, Spin }  from 'antd';
 import { FormInstance }                 from 'antd/lib/form';
 
 const { Option } = Select;
@@ -24,7 +24,8 @@ export default class ApplicationForm extends Component
 
         this.state = {
             fields: [],
-            currentData: {}
+            currentData: {},
+            loading : true
         }
 
 
@@ -34,13 +35,15 @@ export default class ApplicationForm extends Component
     async componentDidMount() 
     {
         const { apiConsumer, currentRecord } = this.props;        
+        let data;
 
         if ( currentRecord.action === "UPDATE" )
         {
-            const data = await apiConsumer.loader( currentRecord.from, currentRecord.param );
-
-            this.setState({ currentData: data });
+             data = await apiConsumer.loader( currentRecord.from, currentRecord.param );
+            
         }
+
+        this.setState({ loading: false, currentData: data });
         
     }
 
@@ -58,20 +61,20 @@ export default class ApplicationForm extends Component
                     label="Username"
                     >
 
-                    <Input value= { this.state.currentData.username }/>
+                    <Input value= { this.state.currentData.user.username }/>
                 </Form.Item>
 
                 <Form.Item
                     label="Password"
                     >
 
-                    <Input value= { this.state.currentData.password }/>
+                    <Input value= { this.state.currentData.user.password }/>
                 </Form.Item>
 
                 <Form.Item 
                     label = "IsActive">
                     
-                    <Select defaultValue = { this.state.currentData.isActive === true ? "true" : "false" } >
+                    <Select defaultValue = { this.state.currentData.user.isActive === true ? "true" : "false" } >
                         <Option value="true"> True </Option>
                         <Option value="false"> False </Option>
                     </Select>
@@ -80,11 +83,7 @@ export default class ApplicationForm extends Component
                 <Form.Item
                     label="authority">
 
-                    <Select defaultValue= { this.state.currentData.authority } >
-                       
-                       
-
-                    </Select>
+                    
 
                 </Form.Item>
 
@@ -96,6 +95,11 @@ export default class ApplicationForm extends Component
     
     render() 
     {
+        if(this.state.loading) 
+        {
+            return <Spin size="large"></Spin>
+        }
+
         let form;
 
         switch ( this.props.currentRecord.from )
