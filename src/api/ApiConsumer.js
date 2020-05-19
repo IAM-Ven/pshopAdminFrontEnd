@@ -1,12 +1,13 @@
 
-import { endPoints } from './points';
+import  EndPoints  from './EndPoints';
 
 /**
  *  This class is used for consuming the spring rest api
  * 
  */
-export default class ApiConsumer 
+export default class ApiConsumer extends EndPoints
 {
+
     // Execute a raw get request
     async get( link ) 
     {
@@ -27,8 +28,11 @@ export default class ApiConsumer
      */
     async loadUsers()
     {
-        const resp = await this.get(endPoints.URL+ endPoints.USERS);
+        const url = this.getUrlUsers();
 
+        const resp = await this.get(url);
+
+        // Load all the promises in the array
         const promises = resp._embedded.users.map(async user => {
             return {
                 key: user.username,
@@ -40,6 +44,7 @@ export default class ApiConsumer
             }
         });
 
+        // Wait for all the promises to compleate and then return
         return await Promise.all(promises);
         
     }
@@ -50,7 +55,8 @@ export default class ApiConsumer
      */
     async loadUser( username ) 
     {
-        const resp = await this.get(endPoints.URL + endPoints.USERS + "/" + username);
+        const url = this.getUrlUser( username );
+        const resp = await this.get(url);
 
         const data = {
             username: resp.username,
@@ -70,18 +76,34 @@ export default class ApiConsumer
     {
         let data;
 
-        console.log(from);
-        
 
         switch (from) 
         {
             case "users":
-                data = await this.loadUser( argument )
+                data = {
+                    user : await this.loadUser(argument),
+                    authorityList: await this.getAuthorityList()
+                }
                 break;
                 
         }
 
         return data;
+    }
+
+    /*
+        Get all the authority resources
+    */
+    async getAuthorityList()
+    {
+        const url = this.getUrlAuthorities();
+
+        const data = await this.get(url);
+
+        return data._embedded.authorities;
+
+
+
     }
 
 }

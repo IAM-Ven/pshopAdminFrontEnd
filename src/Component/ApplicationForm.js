@@ -38,13 +38,13 @@ export default class ApplicationForm extends Component
         if ( currentRecord.action === "UPDATE" )
         {
             const data = await apiConsumer.loader( currentRecord.from, currentRecord.param );
-            
+
             this.setState({ currentData: data });
         }
         
-
-
     }
+
+    
 
     renderUserForm = () =>  
     {
@@ -72,11 +72,21 @@ export default class ApplicationForm extends Component
                     label = "IsActive">
                     
                     <Select defaultValue = { this.state.currentData.isActive === true ? "true" : "false" } >
-                        <Option value="true"> Male </Option>
-                        <Option value="false"> Female </Option>
+                        <Option value="true"> True </Option>
+                        <Option value="false"> False </Option>
                     </Select>
                 </Form.Item >
                     
+                <Form.Item
+                    label="authority">
+
+                    <Select defaultValue= { this.state.currentData.authority } >
+                       
+                       
+
+                    </Select>
+
+                </Form.Item>
 
             </Form>
         )
