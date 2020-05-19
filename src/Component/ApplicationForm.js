@@ -18,6 +18,12 @@ export default class ApplicationForm extends Component
 
     formRef = React.createRef();
 
+    onFinish = values => {
+        console.log(values);
+        
+    }
+
+
     constructor(props) 
     {
         super(props);
@@ -40,6 +46,7 @@ export default class ApplicationForm extends Component
         if ( currentRecord.action === "UPDATE" )
         {
              data = await apiConsumer.loader( currentRecord.from, currentRecord.param );
+            console.log(data);
             
         }
 
@@ -47,47 +54,73 @@ export default class ApplicationForm extends Component
         
     }
 
+    generateAuthorityList() { 
+      return this.state.currentData.authorityList.map((authority) => { 
+            return <Option key={ authority.id } value={ authority.authority }> { authority.authority } </Option>
+        })
+    }
     
 
     renderUserForm = () =>  
     {
-
-        console.log(this.state.currentData);
-        
-
         return (
-            <Form { ...layout } ref={ this.formRef } name="control-ref">
+            <Form { ...layout } ref={ this.formRef } name="control-ref" 
+            onFinish= { this.onFinish }
+            initialValues={
+                {
+                    username: this.state.currentData.user.username,
+                    password: this.state.currentData.user.password,
+                    isActive: this.state.currentData.user.isActive == true ? "true": "false",
+                    authority: this.state.currentData.user.authority.authority
+
+                }
+            }
+            >
                 <Form.Item
+                    name="username"
                     label="Username"
                     >
 
-                    <Input value= { this.state.currentData.user.username }/>
+                    <Input />
                 </Form.Item>
 
                 <Form.Item
+                    name = "password"
                     label="Password"
                     >
 
-                    <Input value= { this.state.currentData.user.password }/>
+                    <Input/>
                 </Form.Item>
 
                 <Form.Item 
+                name= "isActive"
                     label = "IsActive">
                     
-                    <Select defaultValue = { this.state.currentData.user.isActive === true ? "true" : "false" } >
+                    <Select  >
                         <Option value="true"> True </Option>
                         <Option value="false"> False </Option>
                     </Select>
                 </Form.Item >
                     
                 <Form.Item
-                    label="authority">
-
-                    
-
+                    name="authority"
+                    label="Authority">
+                        <Select>
+                            { this.generateAuthorityList() }
+                        </Select>
                 </Form.Item>
 
-            </Form>
+                <Form.Item {...tailLayout}>
+                    <Button type="primary" htmlType="submit">
+                    
+                    </Button>
+                </Form.Item>
+                <Form.Item>
+                    <Button type="primary" htmlType="submit">
+                        Submit
+                    </Button>
+                </Form.Item>
+                </Form>
         )
 
     }
